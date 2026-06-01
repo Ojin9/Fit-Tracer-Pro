@@ -72,15 +72,28 @@ function createWorkout(data) {
   }
 }
 
-// Testování
+// Výpis na stránku
 const workouts = workoutDataList.map(createWorkout);
 let totalCal = 0;
 
-console.log("=== FitTracker Pro ===\n");
-workouts.forEach((w) => {
-  console.log(w.getSummary());
-  totalCal += w.calculateCalories();
-});
+const output = document.getElementById("workout-output");
+if (output) {
+  const list = document.createElement("ul");
+  list.className = "workout-list";
 
-console.log(`\nCelkem kalorií: ${totalCal}`);
-console.log(`Průměr: ${Math.round(totalCal / workouts.length)}`);
+  workouts.forEach((w) => {
+    const item = document.createElement("li");
+    item.textContent = w.getSummary();
+    list.appendChild(item);
+    totalCal += w.calculateCalories();
+  });
+
+  const summary = document.createElement("div");
+  summary.className = "workout-summary";
+  summary.innerHTML = `\n    <p><strong>Celkem kalorií:</strong> ${totalCal}</p>\n    <p><strong>Průměr na trénink:</strong> ${Math.round(totalCal / workouts.length)}</p>\n  `;
+
+  output.appendChild(list);
+  output.appendChild(summary);
+} else {
+  console.warn("Nelze najít element #workout-output pro zobrazení dat.");
+}
