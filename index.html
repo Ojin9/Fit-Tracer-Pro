@@ -6,8 +6,38 @@
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <h1>FitTracker Pro</h1>
-  <p>Otevřete konzoli (F12) pro výstup.</p>
+  <div class="page-shell">
+    <header class="app-header">
+      <div class="brand">
+        <span class="logo">🏃</span>
+        <div>
+          <h1>FitTracker Pro</h1>
+          <p>Základní přehled tréninků a kalorií.</p>
+        </div>
+      </div>
+    </header>
+
+    <main class="content">
+      <section class="card" id="workout-output">
+        <h2>Výstup</h2>
+        <p>Data tréninků se načítají přímo na stránce.</p>
+      </section>
+
+      <section class="card">
+        <h2>Instrukce</h2>
+        <ul>
+          <li>Přidejte další tréninky do <code>src/data.ts</code>.</li>
+          <li>TypeScript vypisuje seznam tréninků do této stránky automaticky.</li>
+          <li>Styly jsou definovány v <code>styles.css</code>.</li>
+        </ul>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <p>FitTracker Pro &ndash; jednoduché demo</p>
+    </footer>
+  </div>
+
   <script src="dist/main.js"></script>
 </body>
 </html>
