@@ -1,59 +1,44 @@
-/* Základní reset */
 * {
   box-sizing: border-box;
 }
 
-html, body {
-  margin: 0;
-  min-height: 100%;
-}
-
 body {
-  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-  background: #f4f7fb;
+  margin: 0;
+  font-family: 'Segoe UI', Arial, sans-serif;
+  background: linear-gradient(180deg, #eef2ff 0%, #f9fbff 100%);
   color: #1f2937;
-  line-height: 1.6;
+  min-height: 100vh;
 }
 
 .page-shell {
-  max-width: 960px;
+  max-width: 900px;
   margin: 0 auto;
-  padding: 24px;
+  padding: 20px 20px 0;
 }
 
 .app-header {
-  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
-  border-radius: 20px;
-  color: #fff;
-  padding: 24px;
-  margin-bottom: 24px;
+  background: #ffffff;
+  border: 1px solid #dbeafe;
+  border-radius: 18px;
+  padding: 22px;
+  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.06);
+  margin-bottom: 20px;
 }
 
-.brand {
+.brand-row {
   display: flex;
-  align-items: center;
   gap: 16px;
-}
-
-.logo {
-  display: inline-flex;
   align-items: center;
-  justify-content: center;
-  width: 56px;
-  height: 56px;
-  background: rgba(255, 255, 255, 0.18);
-  border-radius: 50%;
-  font-size: 1.6rem;
 }
 
-h1 {
+.app-header h1 {
   margin: 0;
-  font-size: clamp(2rem, 2.5vw, 2.5rem);
+  font-size: clamp(2rem, 2.5vw, 2.6rem);
 }
 
-h2 {
-  margin-top: 0;
-  color: #111827;
+.app-header p {
+  margin: 10px 0 0;
+  color: #475569;
 }
 
 .content {
@@ -63,73 +48,128 @@ h2 {
 
 .card {
   background: #ffffff;
-  border: 1px solid #e5e7eb;
-  border-radius: 18px;
-  padding: 20px;
-  box-shadow: 0 12px 28px rgba(15, 23, 42, 0.06);
+  border: 1px solid #e2e8f0;
+  border-radius: 20px;
+  padding: 22px;
+  box-shadow: 0 20px 40px rgba(15, 23, 42, 0.05);
 }
 
-.card p,
-.card ul {
+.card-title h2 {
+  margin: 0 0 6px;
+  font-size: 1.35rem;
+}
+
+.card-title p {
   margin: 0;
+  color: #64748b;
+  font-size: 0.95rem;
 }
 
-.card ul {
-  padding-left: 20px;
+.workout-form {
+  display: grid;
+  gap: 16px;
 }
 
-.workout-list {
-  margin: 16px 0 0;
-  padding: 0;
-  list-style: none;
+.form-row {
+  display: grid;
+  gap: 8px;
 }
 
-.workout-list li {
-  padding: 10px 12px;
-  border: 1px solid #e5e7eb;
-  border-radius: 14px;
-  background: #f8fafc;
-  margin-bottom: 10px;
-  font-size: 0.98rem;
-}
-
-.workout-summary {
-  margin-top: 16px;
-  padding-top: 16px;
-  border-top: 1px solid #e5e7eb;
+.form-row label {
+  font-size: 0.95rem;
   color: #334155;
 }
 
-.workout-summary p {
-  margin: 0 0 8px;
+.form-row input,
+.form-row select {
+  width: 100%;
+  padding: 12px 14px;
+  border: 1px solid #cbd5e1;
+  border-radius: 14px;
+  background: #f8fafc;
+  color: #0f172a;
 }
 
-code {
-  background: #f3f4f6;
-  color: #111827;
-  padding: 2px 6px;
-  border-radius: 6px;
-  font-family: "Courier New", Courier, monospace;
+.form-row input:focus,
+.form-row select:focus {
+  outline: none;
+  border-color: #93c5fd;
+  box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
+}
+
+.button-row {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.primary-button {
+  padding: 12px 20px;
+  border: none;
+  background: #2563eb;
+  color: white;
+  border-radius: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.18s ease, box-shadow 0.18s ease;
+}
+
+.primary-button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 10px 20px rgba(37, 99, 235, 0.18);
+}
+
+.workout-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.workout-item {
+  display: grid;
+  gap: 8px;
+  padding: 16px;
+  background: #f8fbff;
+  border: 1px solid #dbeafe;
+  border-radius: 16px;
+}
+
+.workout-item strong {
+  display: block;
+  font-size: 0.98rem;
+  color: #1d4ed8;
+}
+
+.workout-item span,
+.workout-item p {
+  margin: 0;
+  color: #334155;
+  font-size: 0.95rem;
 }
 
 .footer {
-  margin-top: 28px;
   text-align: center;
-  color: #475569;
+  color: #6b7280;
+  font-size: 0.95rem;
+  padding: 28px 0;
 }
 
-@media (max-width: 640px) {
+.hidden {
+  display: none;
+}
+@media (max-width: 700px) {
   .page-shell {
     padding: 16px;
   }
 
-  .brand {
-    flex-direction: column;
-    align-items: flex-start;
+  .content {
+    gap: 16px;
   }
 
-  .logo {
-    width: 48px;
-    height: 48px;
+  .button-row {
+    justify-content: stretch;
+  }
+
+  .primary-button {
+    width: 100%;
   }
 }

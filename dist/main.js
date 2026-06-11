@@ -1,26 +1,19 @@
-// Abstraktní bázová třída
+// FitTracker jednoduché skriptování
 class Workoutitem {
   constructor(id, date, durationMinutes) {
-    if (!id || durationMinutes <= 0) {
-      throw new Error("Chybná data");
-    }
     this.id = id;
-    this.date = date;
+    this.date = new Date(date);
     this.durationMinutes = durationMinutes;
   }
 
   getSummary() {
-    return `${this.id} | ${this.date.toLocaleDateString()} | ${this.durationMinutes}min`;
+    return `${this.id} | ${this.date.toLocaleDateString()} | ${this.durationMinutes} min`;
   }
 }
 
-// Kardio trénink
 class CardioWorkout extends Workoutitem {
   constructor(id, date, durationMinutes, heartRate) {
     super(id, date, durationMinutes);
-    if (heartRate <= 0 || heartRate > 220) {
-      throw new Error("Chybná tepová frekvence");
-    }
     this.heartRate = heartRate;
   }
 
@@ -29,17 +22,13 @@ class CardioWorkout extends Workoutitem {
   }
 
   getSummary() {
-    return `${super.getSummary()} | Kardio | BPM: ${this.heartRate} | Cal: ${this.calculateCalories()}`;
+    return `${super.getSummary()} | Kardio | Tep ${this.heartRate} | Cal: ${this.calculateCalories()}`;
   }
 }
 
-// Silový trénink
 class StrengthWorkout extends Workoutitem {
   constructor(id, date, durationMinutes, weight, difficulty) {
     super(id, date, durationMinutes);
-    if (weight <= 0) {
-      throw new Error("Chybná váha");
-    }
     this.weight = weight;
     this.difficulty = difficulty;
   }
@@ -54,46 +43,140 @@ class StrengthWorkout extends Workoutitem {
   }
 }
 
-// Surová data
 const workoutDataList = [
-  { id: "cardio-01", date: "2025-05-10", durationMinutes: 30, type: "cardio", heartRate: 140 },
-  { id: "strength-01", date: "2025-05-10", durationMinutes: 45, type: "strength", weight: 50, difficulty: "MEDIUM" },
-  { id: "cardio-02", date: "2025-05-11", durationMinutes: 20, type: "cardio", heartRate: 150 },
-  { id: "strength-02", date: "2025-05-11", durationMinutes: 40, type: "strength", weight: 80, difficulty: "HARD" }
+  { id: "cardio-01", date: "2025-05-10", durationMinutes: 30, type: "cardio", activity: "beh", heartRate: 140 },
+  { id: "strength-01", date: "2025-05-10", durationMinutes: 45, type: "strength", activity: "bench", weight: 50, difficulty: "MEDIUM" },
+  { id: "cardio-02", date: "2025-05-11", durationMinutes: 20, type: "cardio", activity: "cyklistika", heartRate: 150 },
+  { id: "strength-02", date: "2025-05-11", durationMinutes: 40, type: "strength", activity: "drep", weight: 80, difficulty: "HARD" }
 ];
 
-// Vytváření instancí z dat
-function createWorkout(data) {
-  const date = new Date(data.date);
-  if (data.type === "cardio") {
-    return new CardioWorkout(data.id, date, data.durationMinutes, data.heartRate);
-  } else {
-    return new StrengthWorkout(data.id, date, data.durationMinutes, data.weight, data.difficulty);
+const output = document.getElementById("workout-output");
+const form = document.getElementById("workout-form");
+const typeSelect = document.getElementById("workout-type");
+const activitySelect = document.getElementById("workout-activity");
+const workouts = workoutDataList.slice();
+
+const cardioActivities = [
+  { value: "beh", label: "Běh" },
+  { value: "cyklistika", label: "Cyklistika" },
+  { value: "plavani", label: "Plavání" },
+  { value: "jine", label: "Jiné" },
+];
+
+const strengthActivities = [
+  { value: "bench", label: "Bench" },
+  { value: "drep", label: "Dřep" },
+  { value: "mrtvy-tah", label: "Mrtvý tah" },
+  { value: "jine", label: "Jiné" },
+];
+
+function renderActivityOptions(type) {
+  if (!activitySelect) return;
+  const options = type === "cardio" ? cardioActivities : strengthActivities;
+  const currentValue = activitySelect.value;
+  activitySelect.innerHTML = "";
+  options.forEach((item) => {
+    const option = document.createElement("option");
+    option.value = item.value;
+    option.textContent = item.label;
+    activitySelect.appendChild(option);
+  });
+  if (options.some((item) => item.value === currentValue)) {
+    activitySelect.value = currentValue;
   }
 }
 
-// Výpis na stránku
-const workouts = workoutDataList.map(createWorkout);
-let totalCal = 0;
-
-const output = document.getElementById("workout-output");
-if (output) {
-  const list = document.createElement("ul");
-  list.className = "workout-list";
-
-  workouts.forEach((w) => {
-    const item = document.createElement("li");
-    item.textContent = w.getSummary();
-    list.appendChild(item);
-    totalCal += w.calculateCalories();
-  });
-
-  const summary = document.createElement("div");
-  summary.className = "workout-summary";
-  summary.innerHTML = `\n    <p><strong>Celkem kalorií:</strong> ${totalCal}</p>\n    <p><strong>Průměr na trénink:</strong> ${Math.round(totalCal / workouts.length)}</p>\n  `;
-
-  output.appendChild(list);
-  output.appendChild(summary);
-} else {
-  console.warn("Nelze najít element #workout-output pro zobrazení dat.");
+function activityLabel(code) {
+  switch (code) {
+    case "beh":
+      return "Běh";
+    case "plavani":
+      return "Plavání";
+    case "cyklistika":
+      return "Cyklistika";
+    case "bench":
+      return "Bench";
+    case "drep":
+      return "Dřep";
+    case "mrtvy-tah":
+      return "Mrtvý tah";
+    default:
+      return "Jiné";
+  }
 }
+
+function updateTypeFields() {
+  const isCardio = typeSelect && typeSelect.value === "cardio";
+  const cardioFields = document.querySelectorAll(".cardio-field");
+  const strengthFields = document.querySelectorAll(".strength-field");
+  for (let i = 0; i < cardioFields.length; i++) {
+    cardioFields[i].style.display = isCardio ? "block" : "none";
+  }
+  for (let i = 0; i < strengthFields.length; i++) {
+    strengthFields[i].style.display = isCardio ? "none" : "block";
+  }
+  renderActivityOptions(typeSelect && typeSelect.value === "cardio" ? "cardio" : "strength");
+}
+
+function createWorkout(data) {
+  if (data.type === "cardio") {
+    return new CardioWorkout(data.id, data.date, data.durationMinutes, data.heartRate || 120);
+  }
+  return new StrengthWorkout(data.id, data.date, data.durationMinutes, data.weight || 0, data.difficulty || "MEDIUM");
+}
+
+function renderWorkouts() {
+  if (!output) return;
+  let html = "<h2>Moje tréninky</h2>";
+  html += "<ul class='workout-list'>";
+  for (let i = 0; i < workouts.length; i++) {
+    const item = workouts[i];
+    const summary = createWorkout(item).getSummary();
+    const activityText = item.activity ? (activityLabel(item.activity) + ' • ') : '';
+    html += `<li class='workout-item'>${activityText}${summary}</li>`;
+  }
+  html += "</ul>";
+  output.innerHTML = html;
+}
+
+function init() {
+  renderWorkouts();
+  updateTypeFields();
+
+  if (typeSelect) {
+    typeSelect.addEventListener("change", updateTypeFields);
+  }
+
+  if (form) {
+    form.addEventListener("submit", function (event) {
+      event.preventDefault();
+      const data = new FormData(form);
+      const type = data.get("type") || "cardio";
+      const activity = (data.get("activity") || "jine").toString();
+      const duration = Number(data.get("durationMinutes"));
+      if (!duration) {
+        alert("Vyplň délku.");
+        return;
+      }
+      const workout = {
+        id: type + "-" + Date.now(),
+        date: new Date().toISOString().slice(0,10),
+        durationMinutes: duration,
+        type: type,
+        activity: activity,
+      };
+      if (type === "cardio") {
+        workout.heartRate = Number(data.get("heartRate"));
+      } else {
+        workout.weight = Number(data.get("weight"));
+        workout.difficulty = data.get("difficulty") || "MEDIUM";
+      }
+      workouts.push(workout);
+      renderWorkouts();
+      form.reset();
+      updateTypeFields();
+    });
+  }
+}
+
+init();
